@@ -67,6 +67,13 @@ Add the following to your pom :
 
 See <http://central.sonatype.org/pages/apache-maven.html>.
 
+    # deploy a snapshot for snapshot
+    mvn clean deploy
+    
+    # perform a release - NOTE : you need to have a published gpg key installed on your system
+    mvn release:clean release:prepare
+    mvn release:perform
+
 ## Licence
 
 The project is licenced under the Apache 2 licence.
