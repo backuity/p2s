@@ -7,6 +7,10 @@
     <artifactId>p2s</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <scm>
+        <connection>scm:git:https://github.com/backuity/p2s.git</connection>
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
