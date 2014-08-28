@@ -61,3 +61,12 @@ Add the following to your pom :
      </dependency>
  </dependencies>
 ```
+
+
+## Release
+
+See <http://central.sonatype.org/pages/apache-maven.html>.
+
+## Licence
+
+The project is licenced under the Apache 2 licence.
