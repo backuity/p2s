@@ -67,12 +67,16 @@ Add the following to your pom :
 
 See <http://central.sonatype.org/pages/apache-maven.html>.
 
-    # deploy a snapshot for snapshot
+    cd p2s
+
+    # deploy a snapshot
     mvn clean deploy
     
-    # perform a release - NOTE : you need to have a published gpg key installed on your system
-    mvn release:clean release:prepare
-    mvn release:perform
+    # perform a release - NOTE : you need to have a published gpg key installed on your system    
+    # update the version manually - commit push and tag
+    mvn clean deploy -P release
+    
+    # promote to central (through the web interface)
 
 ## Licence
 
