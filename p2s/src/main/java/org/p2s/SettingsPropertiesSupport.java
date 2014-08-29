@@ -11,18 +11,6 @@ public class SettingsPropertiesSupport {
         return prop;
     }
 
-    protected Integer loadMandatoryInt(String name, Properties properties) {
-        return parseInt(name, loadMandatory(name, properties));
-    }
-
-    private Integer parseInt(String name, String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch(NumberFormatException e) {
-            throw new RuntimeException("Property " + name + " (= " + value + ") is not a valid integer");
-        }
-    }
-
     private void checkProperty(String name, String value) {
         if( value == null ) {
             throw new RuntimeException("Cannot find mandatory setting " + name);
@@ -34,7 +22,60 @@ public class SettingsPropertiesSupport {
         return Optional.ofNullable(prop);
     }
 
-    protected Optional<Integer> loadOptionalInt(String name, Properties properties) {
-        return loadOptional(name, properties).map( s -> parseInt(name, s));
+    // Integer
+    // ------------------------------------------------------------------------------
+
+    protected Integer loadMandatoryInteger(String name, Properties properties) {
+        return parseInteger(name, loadMandatory(name, properties));
+    }
+
+    private Integer parseInteger(String name, String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch(NumberFormatException e) {
+            throw new RuntimeException("Property " + name + " (= " + value + ") is not a valid integer");
+        }
+    }
+
+    protected Optional<Integer> loadOptionalInteger(String name, Properties properties) {
+        return loadOptional(name, properties).map( s -> parseInteger(name, s));
+    }
+
+    // Long
+    // ------------------------------------------------------------------------------
+
+    protected Long loadMandatoryLong(String name, Properties properties) {
+        return parseLong(name, loadMandatory(name, properties));
+    }
+
+    private Long parseLong(String name, String value) {
+        try {
+            return Long.parseLong(value);
+        } catch(NumberFormatException e) {
+            throw new RuntimeException("Property " + name + " (= " + value + ") is not a valid long");
+        }
+    }
+
+    protected Optional<Long> loadOptionalLong(String name, Properties properties) {
+        return loadOptional(name, properties).map( s -> parseLong(name, s));
+    }
+
+    // Boolean
+    // ------------------------------------------------------------------------------
+
+    protected Boolean loadMandatoryBoolean(String name, Properties properties) {
+        return parseBoolean(name, loadMandatory(name, properties));
+    }
+
+    private Boolean parseBoolean(String name, String value) {
+        try {
+            return Boolean.parseBoolean(value);
+        } catch(NumberFormatException e) {
+            throw new RuntimeException("Property " + name + " (= " + value + ") is not a valid boolean");
+        }
+    }
+
+    protected Optional<Boolean> loadOptionalBoolean(String name, Properties properties) {
+        return loadOptional(name, properties).map( s -> parseBoolean(name, s));
     }
 }

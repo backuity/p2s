@@ -7,16 +7,19 @@ import java.util.Properties;
 
 public class SettingsFactory {
 
-    public static <T> T loadFromProperties(String classpath, Class<T> clazz) {
+    public static <T> T loadFromProperties(String classpath, Class<T> clazz, SettingOverride ... overrides) {
         Object settings;
         Class<?> settingsPropertiesClass;
         try {
-            settingsPropertiesClass = ClassLoader.getSystemClassLoader().loadClass(clazz.getCanonicalName() + "Properties");
+            settingsPropertiesClass = SettingsFactory.class.getClassLoader().loadClass(clazz.getCanonicalName() + "Properties");
             settings = settingsPropertiesClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("Cannot load " + clazz, e);
         }            Properties properties = loadPropertiesFromClassPath(classpath);
         try {
+            for( SettingOverride override : overrides ) {
+                properties.setProperty(override.getKey(), override.getValue());
+            }
             settingsPropertiesClass.getMethod("loadProperties", Properties.class ).invoke(settings, properties);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Cannot load properties " + classpath + ", " + e.getTargetException().getMessage(), e.getTargetException());
@@ -28,7 +31,7 @@ public class SettingsFactory {
 
     private static Properties loadPropertiesFromClassPath(String classpath) {
         try {
-            try( InputStream is = ClassLoader.getSystemResourceAsStream(classpath)) {
+            try( InputStream is = SettingsFactory.class.getClassLoader().getResourceAsStream(classpath)) {
                 if( is == null ) {
                     throw new RuntimeException("Cannot find " + classpath + " in the classpath");
                 }

@@ -21,4 +21,8 @@ public class Setting {
     public String getType() {
         return type;
     }
+
+    public static SettingOverride override(String key, String value) {
+        return new SettingOverride(key, value);
+    }
 }

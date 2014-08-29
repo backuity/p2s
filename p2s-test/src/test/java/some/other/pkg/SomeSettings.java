@@ -10,4 +10,6 @@ public interface SomeSettings {
     Optional<Integer> timeout();
     String name();
     String theSurname();
+    Long timestamp();
+    Boolean activate();
 }

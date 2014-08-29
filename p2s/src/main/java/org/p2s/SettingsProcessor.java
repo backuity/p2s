@@ -30,28 +30,6 @@ public class SettingsProcessor extends AbstractProcessor {
         }
     }
 
-    private String typeToString(TypeMirror type) {
-        if( isOptionalType(type) ) {
-            TypeMirror firstTypeParam = ((DeclaredType)type).getTypeArguments().get(0);
-            TypeElement param = toTypeElement(firstTypeParam).orElseThrow(() ->
-                    new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + type));
-            return typeElementToString(param);
-        } else {
-            TypeElement elem = toTypeElement(type).orElseThrow( () -> new RuntimeException("Not a valid type " + type) );
-            return typeElementToString(elem);
-        }
-    }
-
-    private String typeElementToString(TypeElement elem) {
-        if( typeEqualsClass(elem, Integer.class)) {
-            return "Integer";
-        } else if( typeEqualsClass(elem, String.class)) {
-            return "String";
-        } else {
-            throw new RuntimeException(elem + " is not a supported type.");
-        }
-    }
-
     private void process(Filer filer, Element element, String packageName) throws IOException {
         String interfaceName = element.getSimpleName().toString();
         String simpleName = element.getSimpleName().toString() + "Properties";
@@ -93,8 +71,8 @@ public class SettingsProcessor extends AbstractProcessor {
         for( Setting setting : settings ) {
             writer.write("      " + setting.getName() + " = load");
             writer.write(setting.isOptional() ? "Optional" : "Mandatory");
-            if( "Integer".equals(setting.getType()) ) {
-                writer.write("Int");
+            if( !"String".equals(setting.getType()) ) {
+                writer.write(setting.getType()); // special handling for non-string types
             }
             writer.write("(\"" + CaseUtil.camelCaseToDotCase(setting.getName()) + "\", properties);\n");
         }
@@ -141,6 +119,34 @@ public class SettingsProcessor extends AbstractProcessor {
             }
         }
         return settings;
+    }
+
+
+    private String typeToString(TypeMirror type) {
+        if( isOptionalType(type) ) {
+            TypeMirror firstTypeParam = ((DeclaredType)type).getTypeArguments().get(0);
+            TypeElement param = toTypeElement(firstTypeParam).orElseThrow(() ->
+                    new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + type));
+            return typeElementToString(param);
+        } else {
+            TypeElement elem = toTypeElement(type).orElseThrow( () -> new RuntimeException("Not a valid type " + type) );
+            return typeElementToString(elem);
+        }
+    }
+
+    private static List<Class<?>> supportedTypes = Arrays.asList(
+        Integer.class,
+        String.class,
+        Boolean.class,
+        Long.class
+    );
+
+    private String typeElementToString(TypeElement elem) {
+        return supportedTypes.stream()
+                .filter( supportedType -> typeEqualsClass(elem, supportedType))
+                .findFirst()
+                .map(Class::getSimpleName)
+                .orElseThrow(() -> new RuntimeException(elem + " is not a supported type."));
     }
 
     private boolean isOptionalType(TypeMirror type) {
