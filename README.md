@@ -32,6 +32,18 @@ SomeSettings settings = SettingsFactory.loadFromProperties(
 assertEquals("Toto", settings.theSurname());
 assertEquals(Optional.of(1234), settings.timeout());
 ```     
+
+## Override settings
+
+```java
+SomeSettings settings = SettingsFactory.loadFromProperties(
+    "your-properties-from-classpath.properties", SomeSettings.class,
+    Setting.override("the.surname", "Fantastic"),
+    Setting.override("timeout", "789"));
+     
+assertEquals("Fantastic", settings.theSurname());
+assertEquals(Optional.of(789), settings.timeout());     
+```
      
 ## Maven     
      
