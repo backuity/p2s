@@ -12,7 +12,6 @@ public class SettingsFactory {
         Class<?> settingsPropertiesClass;
         try {
             settingsPropertiesClass = SettingsFactory.class.getClassLoader().loadClass(clazz.getCanonicalName() + "Properties");
-            settings = settingsPropertiesClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("Cannot load " + clazz, e);
         }            Properties properties = loadPropertiesFromClassPath(classpath);
@@ -20,11 +19,11 @@ public class SettingsFactory {
             for( SettingOverride override : overrides ) {
                 properties.setProperty(override.getKey(), override.getValue());
             }
-            settingsPropertiesClass.getMethod("loadProperties", Properties.class ).invoke(settings, properties);
+            settings = settingsPropertiesClass.getConstructor(Properties.class).newInstance(properties);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Cannot load properties " + classpath + ", " + e.getTargetException().getMessage(), e.getTargetException());
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot invoke loadProperties method on " + settings, e);
+            throw new IllegalStateException("Cannot construct " + settingsPropertiesClass, e);
         }
         return (T) settings;
     }

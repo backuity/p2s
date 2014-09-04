@@ -3,25 +3,33 @@ package org.p2s;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
-import java.io.Writer;
+import static org.p2s.ReflectionUtil.*;
 import java.util.*;
 
 @SupportedAnnotationTypes({"org.p2s.Settings"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class SettingsProcessor extends AbstractProcessor {
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         try {
-            for (TypeElement element : annotations) {
+            final ClassWriter writer = new ClassWriter(processingEnv.getFiler());
+            SettingsClasses classes = new SettingsClasses();
 
+            for (TypeElement element : annotations) {
                 for (Element e : env.getElementsAnnotatedWith(element)) {
-                    process(processingEnv.getFiler(), e, e.getEnclosingElement().toString());
+                    processClass(e, classes);
                 }
+            }
+
+            for(SettingsClass settingsClass : classes.getClasses()) {
+                writer.writeClass(settingsClass);
             }
             return true;
         } catch(Exception e) {
@@ -30,80 +38,20 @@ public class SettingsProcessor extends AbstractProcessor {
         }
     }
 
-    private void process(Filer filer, Element element, String packageName) throws IOException {
-        String interfaceName = element.getSimpleName().toString();
-        String simpleName = element.getSimpleName().toString() + "Properties";
-        String newClass = packageName + "." + simpleName;
-
-        System.out.println("Processing " + newClass);
-
-        List<Setting> settings = extractSettings(element, simpleName);
-
-        try (Writer writer = filer.createSourceFile(newClass).openWriter()) {
-
-            writer.write("/* Generated on " + new Date() + " */\n");
-
-            writer.write("package " + packageName + ";\n");
-            writer.write("\n");
-            writeImports(writer);
-            writer.write("\n");
-            writer.write("public class " + simpleName + " extends SettingsPropertiesSupport implements " + interfaceName + " {\n");
-
-            writeFields(settings, writer);
-            writer.write("\n");
-
-            writeMethods(settings, writer);
-            writer.write("\n");
-
-            writeLoadProperties(settings, writer);
-            writer.write("}\n");
-        }
-    }
-
-    private void writeImports(Writer writer) throws IOException {
-        writer.write("import java.util.Optional;\n");
-        writer.write("import java.util.Properties;\n");
-        writer.write("import org.p2s.SettingsPropertiesSupport;\n");
-    }
-
-    private void writeLoadProperties(List<Setting> settings, Writer writer) throws IOException {
-        writer.write("  public void loadProperties(Properties properties) {\n");
-        for( Setting setting : settings ) {
-            writer.write("      " + setting.getName() + " = load");
-            writer.write(setting.isOptional() ? "Optional" : "Mandatory");
-            if( !"String".equals(setting.getType()) ) {
-                writer.write(setting.getType()); // special handling for non-string types
-            }
-            writer.write("(\"" + CaseUtil.camelCaseToDotCase(setting.getName()) + "\", properties);\n");
-        }
-        writer.write("  }\n");
-    }
-
-    private void writeMethods(List<Setting> settings, Writer writer) throws IOException {
-        for( Setting setting: settings) {
-            writer.write("  public ");
-            if( setting.isOptional() ) writer.write("Optional<");
-            writer.write(setting.getType());
-            if( setting.isOptional() ) writer.write(">");
-            writer.write(" " + setting.getName() + "() { return " + setting.getName() + "; }\n");
-        }
-    }
-
-    private void writeFields(List<Setting> settings, Writer writer) throws IOException {
-        for( Setting setting : settings) {
-            writer.write("  private ");
-            if( setting.isOptional() ) writer.write("Optional<");
-            writer.write(setting.getType());
-            if( setting.isOptional()) writer.write(">");
-            writer.write(" " + setting.getName() + ";\n");
-        }
-    }
-
-    private List<Setting> extractSettings(Element element, String simpleName) {
+    private void processClass(Element element, SettingsClasses classes) throws IOException {
         if( ! (element instanceof TypeElement) ) {
-            throw new IllegalArgumentException("Not an interface!");
+            throw new IllegalArgumentException(element + " is not an interface!");
         }
         TypeElement interf = (TypeElement)element;
+
+        String interfaceName = element.getSimpleName().toString();
+        String packageName = element.getEnclosingElement().toString();
+        String simpleName = element.getSimpleName().toString() + "Properties";
+
+        System.out.println("Processing " + packageName + "." + simpleName);
+
+        Set<Element> recursiveElements = new HashSet<>();
+
         List<Setting> settings = new ArrayList<>();
 
         for( Element enclosedElement : interf.getEnclosedElements() ) {
@@ -112,56 +60,60 @@ public class SettingsProcessor extends AbstractProcessor {
                 if( method.getParameters().size() > 0 ) {
                     throw new RuntimeException("Method " + method + " of " + simpleName + " has parameters : " + method.getParameters());
                 }
+
+                TypeMirror methodType = method.getReturnType();
+
+                TypeElement elem;
+                boolean isOptional = false;
+
+                if( isOptionalType(methodType) ) {
+                    TypeMirror firstTypeParam = ((DeclaredType)methodType).getTypeArguments().get(0);
+                    elem = toTypeElement(firstTypeParam).orElseThrow(() ->
+                            new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + methodType));
+                    isOptional = true;
+                } else {
+                    elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Not a valid type " + methodType) );
+                }
+
+                boolean isNestedType = false;
+
+                if( ! isSupportedBasicType(elem) ) {
+                    if( isInterface(elem) ) {
+                        recursiveElements.add(elem);
+                        isNestedType = true;
+                    } else {
+                        throw new RuntimeException(elem + " is not supported, it should either be an interface or one of " + supportedBasicTypes);
+                    }
+                }
+
+                String type = elem.getSimpleName().toString();
                 String propName = method.getSimpleName().toString();
-                String type = typeToString(method.getReturnType());
-                boolean isOptional = isOptionalType(method.getReturnType());
-                settings.add(new Setting(propName, type, isOptional));
+
+                settings.add(new Setting(propName, type, isOptional, isNestedType));
             }
         }
-        return settings;
-    }
 
+        classes.add(new SettingsClass(packageName, interfaceName, simpleName, settings));
 
-    private String typeToString(TypeMirror type) {
-        if( isOptionalType(type) ) {
-            TypeMirror firstTypeParam = ((DeclaredType)type).getTypeArguments().get(0);
-            TypeElement param = toTypeElement(firstTypeParam).orElseThrow(() ->
-                    new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + type));
-            return typeElementToString(param);
-        } else {
-            TypeElement elem = toTypeElement(type).orElseThrow( () -> new RuntimeException("Not a valid type " + type) );
-            return typeElementToString(elem);
+        for( Element recursiveElement: recursiveElements) {
+            processClass(recursiveElement, classes);
         }
     }
 
-    private static List<Class<?>> supportedTypes = Arrays.asList(
+    private static List<Class<?>> supportedBasicTypes = Arrays.asList(
         Integer.class,
         String.class,
         Boolean.class,
         Long.class
     );
 
-    private String typeElementToString(TypeElement elem) {
-        return supportedTypes.stream()
+    private Optional<Class<?>> findSupportedBasicType(TypeElement elem) {
+        return supportedBasicTypes.stream()
                 .filter( supportedType -> typeEqualsClass(elem, supportedType))
-                .findFirst()
-                .map(Class::getSimpleName)
-                .orElseThrow(() -> new RuntimeException(elem + " is not a supported type."));
+                .findFirst();
     }
 
-    private boolean isOptionalType(TypeMirror type) {
-        return toTypeElement(type).map( elem -> typeEqualsClass(elem, Optional.class) ).orElse(false);
-    }
-
-    private boolean typeEqualsClass(TypeElement type, Class<?> clazz) {
-        return type.getQualifiedName().toString().equals(clazz.getCanonicalName());
-    }
-
-    private Optional<TypeElement> toTypeElement(TypeMirror type) {
-        if( type instanceof DeclaredType && ((DeclaredType)type).asElement() instanceof TypeElement) {
-            return Optional.of((TypeElement)((DeclaredType)type).asElement());
-        } else {
-            return Optional.empty();
-        }
+    private boolean isSupportedBasicType(TypeElement elem) {
+        return findSupportedBasicType(elem).isPresent();
     }
 }

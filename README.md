@@ -33,6 +33,33 @@ assertEquals("Toto", settings.theSurname());
 assertEquals(Optional.of(1234), settings.timeout());
 ```     
 
+## Nested types
+
+You can use nested settings interfaces :
+
+```java
+@Settings
+public interface ParentSettings {
+    PersonSettings mother();
+    PersonSettings father();
+}
+
+public interface PersonSettings {
+    String firstName();
+    String lastName();
+    Integer age();
+    AddressSettings address();
+}
+
+public interface AddressSettings {
+    String city();
+    String street();
+}
+```
+
+Note : Optional nested types are not yet supported.
+
+
 ## Override settings
 
 ```java
