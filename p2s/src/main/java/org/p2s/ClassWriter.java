@@ -21,7 +21,7 @@ public class ClassWriter {
 
             writer.write("package " + settingsClass.getPackageName() + ";\n");
             writer.write("\n");
-            writeImports(writer);
+            writeImports(settingsClass, writer);
             writer.write("\n");
             writer.write("public class " + settingsClass.getSimpleClassName() +
                     " extends SettingsPropertiesSupport implements " + settingsClass.getInterfaceName() + " {\n");
@@ -37,10 +37,17 @@ public class ClassWriter {
         }
     }
 
-    private void writeImports(Writer writer) throws IOException {
+    private void writeImports(SettingsClass settingsClass, Writer writer) throws IOException {
         writer.write("import java.util.Optional;\n");
         writer.write("import java.util.Properties;\n");
         writer.write("import org.p2s.SettingsPropertiesSupport;\n");
+
+        for( Setting setting : settingsClass.getSettings()) {
+            if((!setting.getPkg().isEmpty()) && (!setting.getPkg().equals(settingsClass.getPackageName()))) {
+               writer.write("import " + setting.getPkg() + "." + setting.getType() + ";\n");
+               writer.write("import " + setting.getPkg() + "." + setting.getType() + "Properties;\n");
+            }
+        }
     }
 
     private void writeConstructors(String className, List<Setting> settings, Writer writer) throws IOException {

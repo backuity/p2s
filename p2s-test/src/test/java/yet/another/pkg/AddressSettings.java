@@ -1,4 +1,4 @@
-package some.other.pkg;
+package yet.another.pkg;
 
 public interface AddressSettings {
     String city();

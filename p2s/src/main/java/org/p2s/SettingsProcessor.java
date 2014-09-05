@@ -3,7 +3,6 @@ package org.p2s;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
@@ -76,9 +75,11 @@ public class SettingsProcessor extends AbstractProcessor {
                 }
 
                 boolean isNestedType = false;
+                String pkg = "";
 
                 if( ! isSupportedBasicType(elem) ) {
                     if( isInterface(elem) ) {
+                        pkg = elem.getEnclosingElement().toString();
                         recursiveElements.add(elem);
                         isNestedType = true;
                     } else {
@@ -89,7 +90,7 @@ public class SettingsProcessor extends AbstractProcessor {
                 String type = elem.getSimpleName().toString();
                 String propName = method.getSimpleName().toString();
 
-                settings.add(new Setting(propName, type, isOptional, isNestedType));
+                settings.add(new Setting(propName, type, pkg, isOptional, isNestedType));
             }
         }
 
