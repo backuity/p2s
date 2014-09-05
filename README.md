@@ -98,7 +98,7 @@ Add the following to your pom :
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s</artifactId>
-         <version>1.2</version>
+         <version>1.3</version>
      </dependency>
  </dependencies>
 ```
