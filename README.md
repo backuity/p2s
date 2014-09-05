@@ -1,4 +1,6 @@
-# Properties To Settings
+Properties To Settings [![Build Status](https://travis-ci.org/backuity/p2s.png?branch=master)](https://travis-ci.org/backuity/p2s)
+======================
+
 
 Generate at compile time settings classes that can load properties.
  
