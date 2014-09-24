@@ -4,7 +4,7 @@
 
     <groupId>org.backuity.p2s</groupId>
     <artifactId>p2s</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
     <name>Properties To Settings</name>
     <description>Generate settings classes that load properties with a simple interface.</description>
     <url>https://github.com/backuity/p2s</url>
