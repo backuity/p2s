@@ -17,24 +17,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <goals><goal>compile</goal></goals>
-                        <configuration>
-                            <compilerArgument>-proc:none</compilerArgument>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-test-compile</id>
-                        <goals><goal>testCompile</goal></goals>
-                        <configuration>
-                            <annotationProcessors>
-                                <annotationProcessor>org.p2s.SettingsProcessor</annotationProcessor>
-                            </annotationProcessors>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +33,7 @@
         <dependency>
             <groupId>org.backuity.p2s</groupId>
             <artifactId>p2s</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

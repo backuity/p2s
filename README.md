@@ -85,11 +85,6 @@ Add the following to your pom :
              <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-compiler-plugin</artifactId>
              <version>3.0</version>
-             <configuration>
-                <annotationProcessors>
-                    <annotationProcessor>org.p2s.SettingsProcessor</annotationProcessor>
-                </annotationProcessors>
-             </configuration>
          </plugin>
      </plugins>
  </build>
