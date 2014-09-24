@@ -76,24 +76,14 @@ assertEquals(Optional.of(789), settings.timeout());
      
 ## Maven     
      
-Add the following to your pom :
+Add the following to your pom (you need to set java version to 1.8):
  
  ```xml
- <build>
-     <plugins>
-         <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-compiler-plugin</artifactId>
-             <version>3.0</version>
-         </plugin>
-     </plugins>
- </build>
-
  <dependencies>
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s</artifactId>
-         <version>1.3</version>
+         <version>1.4</version>
      </dependency>
  </dependencies>
 ```
