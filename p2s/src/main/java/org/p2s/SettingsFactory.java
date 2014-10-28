@@ -15,10 +15,14 @@ public class SettingsFactory {
         } catch (Exception e) {
             throw new IllegalStateException("Cannot load " + clazz, e);
         }            Properties properties = loadPropertiesFromClassPath(classpath);
-        try {
-            for( SettingOverride override : overrides ) {
-                properties.setProperty(override.getKey(), override.getValue());
+
+        for( SettingOverride override : overrides ) {
+            if (properties.getProperty(override.getKey()) == null) {
+                throw new RuntimeException("Setting '" + override.getKey() + "' does not override anything.");
             }
+            properties.setProperty(override.getKey(), override.getValue());
+        }
+        try {
             settings = settingsPropertiesClass.getConstructor(Properties.class).newInstance(properties);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Cannot load properties " + classpath + ", " + e.getTargetException().getMessage(), e.getTargetException());

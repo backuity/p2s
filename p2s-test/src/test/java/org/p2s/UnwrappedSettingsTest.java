@@ -3,23 +3,23 @@ package org.p2s;
 import org.junit.Test;
 import some.other.pkg.ParentSettings;
 
-import static org.junit.Assert.assertEquals;
+import static org.fest.assertions.Assertions.assertThat;
 
 public class UnwrappedSettingsTest {
     @Test
     public void unwrappedSettings() {
         ParentSettings settings = SettingsFactory.loadFromProperties("parents.properties", ParentSettings.class);
 
-        assertEquals("Alice", settings.mother().firstName());
-        assertEquals("Watt", settings.mother().lastName());
-        assertEquals(31, settings.mother().age().intValue());
-        assertEquals("3 rue de la paix", settings.mother().address().street());
-        assertEquals("Toulon", settings.mother().address().city());
+        assertThat(settings.mother().firstName()).isEqualTo("Alice");
+        assertThat(settings.mother().lastName()).isEqualTo("Watt");
+        assertThat(settings.mother().age().intValue()).isEqualTo(31);
+        assertThat(settings.mother().address().street()).isEqualTo("3 rue de la paix");
+        assertThat(settings.mother().address().city()).isEqualTo("Toulon");
 
-        assertEquals("Bob", settings.father().firstName());
-        assertEquals("Callaway", settings.father().lastName());
-        assertEquals(42, settings.father().age().intValue());
-        assertEquals("28 av. de la republique", settings.father().address().street());
-        assertEquals("Lausanne", settings.father().address().city());
+        assertThat(settings.father().firstName()).isEqualTo("Bob");
+        assertThat(settings.father().lastName()).isEqualTo("Callaway");
+        assertThat(settings.father().age().intValue()).isEqualTo(42);
+        assertThat(settings.father().address().street()).isEqualTo("28 av. de la republique");
+        assertThat(settings.father().address().city()).isEqualTo("Lausanne");
     }
 }
