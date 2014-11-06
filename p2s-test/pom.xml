@@ -5,7 +5,7 @@
 
     <groupId>org.backuity.p2s</groupId>
     <artifactId>p2s-test</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
 
     <build>
         <plugins>
