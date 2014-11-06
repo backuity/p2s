@@ -1,6 +1,5 @@
 package org.p2s;
 
-import org.junit.Assert;
 import org.junit.Test;
 import some.other.pkg.SomeSettings;
 
@@ -18,6 +17,16 @@ public class SettingsOverrideTest {
                 Setting.override("activate", "false"),
                 Setting.override("timeout", "987654"),
                 Setting.override("the.surname", "janine"));
+
+        assertThat(settings.activate()).isFalse();
+        assertThat(settings.theSurname()).isEqualTo("janine");
+        assertThat(settings.timeout()).isEqualTo(Optional.of(987654));
+
+        settings = SettingsFactory.from("camel-case-to-dot-case.properties")
+                .override("activate", "false")
+                .override("timeout", "987654")
+                .override("the.surname", "janine")
+                .load(SomeSettings.class);
 
         assertThat(settings.activate()).isFalse();
         assertThat(settings.theSurname()).isEqualTo("janine");

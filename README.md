@@ -28,8 +28,8 @@ You can then automatically load properties file :
 With the following code :
     
 ```java
-SomeSettings settings = SettingsFactory.loadFromProperties(
-    "your-properties-from-classpath.properties", SomeSettings.class);
+SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+                                       .load(SomeSettings.class);
 
 assertEquals("Toto", settings.theSurname());
 assertEquals(Optional.of(1234), settings.timeout());
@@ -61,14 +61,32 @@ public interface AddressSettings {
 
 Note : Optional nested types are not yet supported.
 
+## Fallback
+
+From properties:
+
+```java
+SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+    .withFallback("a-fallback-from-classpath.properties")
+    .load(SomeSettings.class);
+```
+
+From code:
+
+```java
+SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+    .withFallback("the.surname", "Fantastic")
+    .withFallback("timeout", "123")
+    .load(SomeSettings.class);
+```
 
 ## Override settings
 
 ```java
-SomeSettings settings = SettingsFactory.loadFromProperties(
-    "your-properties-from-classpath.properties", SomeSettings.class,
-    Setting.override("the.surname", "Fantastic"),
-    Setting.override("timeout", "789"));
+SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+    .override("the.surname", "Fantastic")
+    .override("timeout", "789")
+    .load(SomeSettings.class);
      
 assertEquals("Fantastic", settings.theSurname());
 assertEquals(Optional.of(789), settings.timeout());     
