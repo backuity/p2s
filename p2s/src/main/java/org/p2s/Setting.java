@@ -32,8 +32,4 @@ public class Setting {
     public String getPkg() {
         return pkg;
     }
-
-    public static SettingOverride override(String key, String value) {
-        return new SettingOverride(key, value);
-    }
 }

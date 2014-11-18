@@ -2,8 +2,20 @@ Properties To Settings [![Build Status](https://travis-ci.org/backuity/p2s.png?b
 ======================
 
 
-Generate at compile time settings classes that can load properties.
- 
+Generate at compile time settings classes (java 8) that can load java properties files or HOCON files.
+
+Add the following dependency to your pom:
+
+```xml
+ <dependencies>
+     <dependency>
+         <groupId>org.backuity.p2s</groupId>
+         <artifactId>p2s</artifactId>
+         <version>2.0</version>
+     </dependency>
+ </dependencies>
+```
+
 Here is an example from the processor-test module:
   
 ```java     
@@ -28,12 +40,45 @@ You can then automatically load properties file :
 With the following code :
     
 ```java
-SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
-                                       .load(SomeSettings.class);
+SomeSettings settings = JulSettingsFactory.from("your-properties-from-classpath.properties")
+                                          .load(SomeSettings.class);
 
 assertEquals("Toto", settings.theSurname());
 assertEquals(Optional.of(1234), settings.timeout());
-```     
+```
+
+## HOCON
+
+To load configuration from an HOCON file add the following dependency to your pom:
+
+```xml
+ <dependencies>
+     <dependency>
+         <groupId>org.backuity.p2s</groupId>
+         <artifactId>p2s-hocon</artifactId>
+         <version>2.0</version>
+     </dependency>
+ </dependencies>
+```
+
+And use `HoconSettingsFactory` instead of `JulSettingsFactory`.
+So given the following HOCON file :
+
+     name = "John Doe"
+     timeout = 1234
+     the {
+       surname = "Toto"
+     }
+
+```java
+SomeSettings settings = HoconSettingsFactory.from("your-hoconfrom-classpath.conf")
+                                            .load(SomeSettings.class);
+
+assertEquals("Toto", settings.theSurname());
+assertEquals(Optional.of(1234), settings.timeout());
+```
+
+This especially shines when used with nested types or arrays.
 
 ## Nested types
 
@@ -59,6 +104,33 @@ public interface AddressSettings {
 }
 ```
 
+You can load up a Parent with the following HOCON file :
+
+    mother {
+      first { name = "Mary Jane" }
+      last { name = "Watson" }
+      age = 32
+      address {
+        city = "Manhattan"
+        street = "1st avenue"
+      }
+    }
+
+    father {
+      # ...
+    }
+
+Or a properties:
+
+    mother.first.name = Alice
+    mother.last.name = Watt
+    mother.age = 31
+    mother.address.street = 3 rue de la paix
+    mother.address.city = Toulon
+
+    father.first.name = Bob
+    # ...
+
 Note : Optional nested types are not yet supported.
 
 ## Fallback
@@ -66,7 +138,7 @@ Note : Optional nested types are not yet supported.
 From properties:
 
 ```java
-SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+SomeSettings settings = JulSettingsFactory.from("your-properties-from-classpath.properties")
     .withFallback("a-fallback-from-classpath.properties")
     .load(SomeSettings.class);
 ```
@@ -74,7 +146,7 @@ SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.pro
 From code:
 
 ```java
-SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+SomeSettings settings = JulSettingsFactory.from("your-properties-from-classpath.properties")
     .withFallback("the.surname", "Fantastic")
     .withFallback("timeout", "123")
     .load(SomeSettings.class);
@@ -83,7 +155,7 @@ SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.pro
 ## Override settings
 
 ```java
-SomeSettings settings = SettingsFactory.from("your-properties-from-classpath.properties")
+SomeSettings settings = JulSettingsFactory.from("your-properties-from-classpath.properties")
     .override("the.surname", "Fantastic")
     .override("timeout", "789")
     .load(SomeSettings.class);
@@ -92,21 +164,6 @@ assertEquals("Fantastic", settings.theSurname());
 assertEquals(Optional.of(789), settings.timeout());     
 ```
      
-## Maven     
-     
-Add the following to your pom (you need to set java version to 1.8):
- 
- ```xml
- <dependencies>
-     <dependency>
-         <groupId>org.backuity.p2s</groupId>
-         <artifactId>p2s</artifactId>
-         <version>1.4</version>
-     </dependency>
- </dependencies>
-```
-
-
 ## Release
 
 See <http://central.sonatype.org/pages/apache-maven.html>.

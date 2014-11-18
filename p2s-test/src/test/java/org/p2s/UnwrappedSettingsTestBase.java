@@ -5,10 +5,13 @@ import some.other.pkg.ParentSettings;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class UnwrappedSettingsTest {
+public abstract class UnwrappedSettingsTestBase {
+
+    public abstract SettingsFactory<?> from(String name);
+
     @Test
     public void unwrappedSettings() {
-        ParentSettings settings = SettingsFactory.loadFromProperties("parents.properties", ParentSettings.class);
+        ParentSettings settings = from("parents").load(ParentSettings.class);
 
         assertThat(settings.mother().firstName()).isEqualTo("Alice");
         assertThat(settings.mother().lastName()).isEqualTo("Watt");

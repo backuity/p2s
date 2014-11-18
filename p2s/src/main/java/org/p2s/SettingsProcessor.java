@@ -50,47 +50,18 @@ public class SettingsProcessor extends AbstractProcessor {
         System.out.println("Processing " + packageName + "." + simpleName);
 
         Set<Element> recursiveElements = new HashSet<>();
-
         List<Setting> settings = new ArrayList<>();
 
         for( Element enclosedElement : interf.getEnclosedElements() ) {
             if( enclosedElement instanceof ExecutableElement) {
+
                 ExecutableElement method = (ExecutableElement)enclosedElement;
                 if( method.getParameters().size() > 0 ) {
                     throw new RuntimeException("Method " + method + " of " + simpleName + " has parameters : " + method.getParameters());
                 }
 
-                TypeMirror methodType = method.getReturnType();
-
-                TypeElement elem;
-                boolean isOptional = false;
-
-                if( isOptionalType(methodType) ) {
-                    TypeMirror firstTypeParam = ((DeclaredType)methodType).getTypeArguments().get(0);
-                    elem = toTypeElement(firstTypeParam).orElseThrow(() ->
-                            new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + methodType));
-                    isOptional = true;
-                } else {
-                    elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Not a valid type " + methodType) );
-                }
-
-                boolean isNestedType = false;
-                String pkg = "";
-
-                if( ! isSupportedBasicType(elem) ) {
-                    if( isInterface(elem) ) {
-                        pkg = elem.getEnclosingElement().toString();
-                        recursiveElements.add(elem);
-                        isNestedType = true;
-                    } else {
-                        throw new RuntimeException(elem + " is not supported, it should either be an interface or one of " + supportedBasicTypes);
-                    }
-                }
-
-                String type = elem.getSimpleName().toString();
-                String propName = method.getSimpleName().toString();
-
-                settings.add(new Setting(propName, type, pkg, isOptional, isNestedType));
+                Setting setting = makeSetting(method, recursiveElements);
+                settings.add(setting);
             }
         }
 
@@ -99,6 +70,40 @@ public class SettingsProcessor extends AbstractProcessor {
         for( Element recursiveElement: recursiveElements) {
             processClass(recursiveElement, classes);
         }
+    }
+
+    private Setting makeSetting(ExecutableElement method, Set<Element> recursiveElements) {
+        TypeMirror methodType = method.getReturnType();
+
+        TypeElement elem;
+        boolean isOptional = false;
+
+        if( isOptionalType(methodType) ) {
+            TypeMirror firstTypeParam = ((DeclaredType)methodType).getTypeArguments().get(0);
+            elem = toTypeElement(firstTypeParam).orElseThrow(() ->
+                    new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + methodType));
+            isOptional = true;
+        } else {
+            elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Not a valid type " + methodType) );
+        }
+
+        boolean isNestedType = false;
+        String pkg = "";
+
+        if( ! isSupportedBasicType(elem) ) {
+            if( isInterface(elem) ) {
+                pkg = elem.getEnclosingElement().toString();
+                recursiveElements.add(elem);
+                isNestedType = true;
+            } else {
+                throw new RuntimeException(elem + " is not supported, it should either be an interface or one of " + supportedBasicTypes);
+            }
+        }
+
+        String type = elem.getSimpleName().toString();
+        String propName = method.getSimpleName().toString();
+
+        return new Setting(propName, type, pkg, isOptional, isNestedType);
     }
 
     private static List<Class<?>> supportedBasicTypes = Arrays.asList(

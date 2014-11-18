@@ -39,7 +39,7 @@ public class ClassWriter {
 
     private void writeImports(SettingsClass settingsClass, Writer writer) throws IOException {
         writer.write("import java.util.Optional;\n");
-        writer.write("import java.util.Properties;\n");
+        writer.write("import org.p2s.DotCaseProperties;\n");
         writer.write("import org.p2s.SettingsPropertiesSupport;\n");
 
         for( Setting setting : settingsClass.getSettings()) {
@@ -51,11 +51,11 @@ public class ClassWriter {
     }
 
     private void writeConstructors(String className, List<Setting> settings, Writer writer) throws IOException {
-        writer.write("  public " + className + "(Properties properties) {\n");
+        writer.write("  public " + className + "(DotCaseProperties properties) {\n");
         writer.write("     this(\"\", properties);\n");
         writer.write("  }\n");
         writer.write("\n");
-        writer.write("  public " + className + "(String prefix, Properties properties) {\n");
+        writer.write("  public " + className + "(String prefix, DotCaseProperties properties) {\n");
 
         for( Setting setting : settings ) {
             String dotCaseName = CaseUtil.camelCaseToDotCase(setting.getName());
