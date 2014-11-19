@@ -2,7 +2,7 @@ package org.p2s;
 
 import java.util.List;
 
-public class SettingsClass {
+class SettingsClass {
     private String interfaceName;
     private String packageName;
     private String simpleClassName;

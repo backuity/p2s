@@ -6,7 +6,7 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.List;
 
-public class ClassWriter {
+class ClassWriter {
     private Filer filer;
 
     public ClassWriter(Filer filer) {

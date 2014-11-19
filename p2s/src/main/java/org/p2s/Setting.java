@@ -4,7 +4,7 @@ package org.p2s;
  * A setting cannot be both:
  *  - a list and an optional
  */
-public class Setting {
+class Setting {
     private final boolean isNestedType;
     private String name, type, pkg;
     private boolean isOptional, isList;
