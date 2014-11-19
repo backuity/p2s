@@ -49,6 +49,9 @@ assertEquals(Optional.of(1234), settings.timeout());
 
 ## HOCON
 
+The [Human-Optimized Config Object Notation](https://github.com/typesafehub/config/blob/master/HOCON.md) files are parsed
+using <https://github.com/typesafehub/config>.
+
 To load configuration from an HOCON file add the following dependency to your pom:
 
 ```xml
