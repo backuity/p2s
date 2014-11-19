@@ -1,3 +1,7 @@
+# 2.1
+
+* Fix SettingsFactory visibility
+
 # 2.0
 
 * Support for HOCON
