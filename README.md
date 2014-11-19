@@ -16,7 +16,7 @@ Add the following dependency to your pom:
  </dependencies>
 ```
 
-Here is an example from the processor-test module:
+Here is an example from the p2s tests:
   
 ```java     
  import org.p2s.Settings;
@@ -80,6 +80,33 @@ assertEquals(Optional.of(1234), settings.timeout());
 
 This especially shines when used with nested types or arrays.
 
+## Lists
+
+You can use parameters of type `List`:
+
+```java
+@Settings
+public interface ListSettings {
+    List<String> languages();
+    List<Integer> sizes();
+}
+```
+
+Using HOCON:
+
+    languages = ["fr", "en", "it"]
+    sizes = [12, 200, 3]
+
+Or Properties (ids don't have to be sequential):
+
+    languages.1 = fr
+    languages.2 = en
+    languages.3 = it
+
+    sizes.1 = 12
+    sizes.20 = 200
+    sizes.300 = 3
+
 ## Nested types
 
 You can use nested settings interfaces :
@@ -130,6 +157,33 @@ Or a properties:
 
     father.first.name = Bob
     # ...
+
+Nested types can also be used in lists:
+
+```java
+@Settings
+public interface ListSettings {
+    List<AddressSettings> addresses();
+}
+```
+
+With a HOCON file:
+
+    addresses = [{
+        city = "Marseille"
+        street = "Rue du bourg"
+      },{
+        city = "NYC"
+        street = "1st avenue"
+      }]
+
+or with a Properties:
+
+    addresses.1.city = Marseille
+    addresses.1.street = Rue du bourg
+
+    addresses.2.city = NYC
+    addresses.2.street = 1st avenue
 
 Note : Optional nested types are not yet supported.
 

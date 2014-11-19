@@ -18,6 +18,10 @@ public class HoconTest {
         @Override public HoconSettingsFactory from(String name) { return HoconTest.from(name); }
     }
 
+    public static class List extends ListTestBase {
+        @Override public SettingsFactory<?> from(String name) { return HoconTest.from(name); }
+    }
+
     public static class Settings extends SettingsTestBase {
         @Override public SettingsFactory<?> from(String name) { return HoconTest.from(name); }
     }

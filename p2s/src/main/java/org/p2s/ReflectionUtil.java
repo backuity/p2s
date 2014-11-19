@@ -4,12 +4,21 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import java.util.List;
 import java.util.Optional;
 
 public class ReflectionUtil {
 
     public static boolean isOptionalType(TypeMirror type) {
-        return toTypeElement(type).map( elem -> typeEqualsClass(elem, Optional.class) ).orElse(false);
+        return isType(type, Optional.class);
+    }
+
+    public static boolean isListType(TypeMirror type) {
+        return isType(type, List.class);
+    }
+
+    public static boolean isType(TypeMirror type, Class<?> clazz) {
+        return toTypeElement(type).map( elem -> typeEqualsClass(elem, clazz) ).orElse(false);
     }
 
     public static boolean typeEqualsClass(TypeElement type, Class<?> clazz) {

@@ -1,3 +1,8 @@
+# 2.0
+
+* Support for HOCON
+* Support for List
+
 # 1.5
 
 * `Setting.override` breaks if nothing gets overridden

@@ -30,6 +30,10 @@ public class JulTest {
         @Override public SettingsFactory<?> from(String name) { return JulTest.from(name); }
     }
 
+    public static class List extends ListTestBase {
+        @Override public SettingsFactory<?> from(String name) { return JulTest.from(name); }
+    }
+
     public static class Fallback extends FallbackTestBase {
         @Override public JulSettingsFactory from(String name) { return JulTest.from(name); }
 

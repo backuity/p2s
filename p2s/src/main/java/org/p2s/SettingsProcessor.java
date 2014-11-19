@@ -48,45 +48,55 @@ public class SettingsProcessor extends AbstractProcessor {
         String simpleName = element.getSimpleName().toString() + "Properties";
 
         System.out.println("Processing " + packageName + "." + simpleName);
+        try {
 
-        Set<Element> recursiveElements = new HashSet<>();
-        List<Setting> settings = new ArrayList<>();
+            Set<Element> recursiveElements = new HashSet<>();
+            List<Setting> settings = new ArrayList<>();
 
-        for( Element enclosedElement : interf.getEnclosedElements() ) {
-            if( enclosedElement instanceof ExecutableElement) {
+            for (Element enclosedElement : interf.getEnclosedElements()) {
+                if (enclosedElement instanceof ExecutableElement) {
 
-                ExecutableElement method = (ExecutableElement)enclosedElement;
-                if( method.getParameters().size() > 0 ) {
-                    throw new RuntimeException("Method " + method + " of " + simpleName + " has parameters : " + method.getParameters());
+                    ExecutableElement method = (ExecutableElement) enclosedElement;
+                    if (method.getParameters().size() > 0) {
+                        throw new RuntimeException("Method " + method + " of " + simpleName + " has parameters : " + method.getParameters());
+                    }
+
+                    Setting setting = makeSetting(method, recursiveElements);
+                    settings.add(setting);
                 }
-
-                Setting setting = makeSetting(method, recursiveElements);
-                settings.add(setting);
             }
-        }
 
-        classes.add(new SettingsClass(packageName, interfaceName, simpleName, settings));
+            classes.add(new SettingsClass(packageName, interfaceName, simpleName, settings));
 
-        for( Element recursiveElement: recursiveElements) {
-            processClass(recursiveElement, classes);
+            for (Element recursiveElement : recursiveElements) {
+                processClass(recursiveElement, classes);
+            }
+        } catch( Exception e ) {
+            throw new RuntimeException("Failed to process " + packageName + "." + simpleName, e);
         }
     }
 
     private Setting makeSetting(ExecutableElement method, Set<Element> recursiveElements) {
         TypeMirror methodType = method.getReturnType();
 
-        TypeElement elem;
-        boolean isOptional = false;
-
         if( isOptionalType(methodType) ) {
             TypeMirror firstTypeParam = ((DeclaredType)methodType).getTypeArguments().get(0);
-            elem = toTypeElement(firstTypeParam).orElseThrow(() ->
-                    new RuntimeException("Cannot extract type parameter " + firstTypeParam + " of optional element " + methodType));
-            isOptional = true;
+            TypeElement elem = toTypeElement(firstTypeParam).orElseThrow(() ->
+                    new RuntimeException("Cannot extract optional type parameter " + firstTypeParam + " of method " + method));
+            return makeSetting(method, recursiveElements, elem, true, false);
+        } else if( isListType(methodType) ) {
+            TypeMirror firstTypeParam = ((DeclaredType)methodType).getTypeArguments().get(0);
+            TypeElement elem = toTypeElement(firstTypeParam).orElseThrow(() ->
+                    new RuntimeException("Cannot extract list type parameter " + firstTypeParam + " of method " + method));
+            return makeSetting(method, recursiveElements, elem, false, true);
         } else {
-            elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Not a valid type " + methodType) );
+            TypeElement elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Method " + method +
+                    " return type " + methodType + " isn't supported") );
+            return makeSetting(method, recursiveElements, elem, false, false);
         }
+    }
 
+    private Setting makeSetting(ExecutableElement method, Set<Element> recursiveElements, TypeElement elem, boolean isOptional, boolean isList) {
         boolean isNestedType = false;
         String pkg = "";
 
@@ -103,7 +113,7 @@ public class SettingsProcessor extends AbstractProcessor {
         String type = elem.getSimpleName().toString();
         String propName = method.getSimpleName().toString();
 
-        return new Setting(propName, type, pkg, isOptional, isNestedType);
+        return new Setting(propName, type, pkg, isOptional, isNestedType, isList);
     }
 
     private static List<Class<?>> supportedBasicTypes = Arrays.asList(
