@@ -1,6 +1,7 @@
-package org.p2s;
+package org.p2s.test;
 
 import org.junit.Test;
+import org.p2s.SettingsFactory;
 import some.other.pkg.ListSettings;
 
 import static org.fest.assertions.Assertions.assertThat;

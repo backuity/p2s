@@ -1,7 +1,9 @@
-package org.p2s;
+package org.p2s.test;
 
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.p2s.HoconSettingsFactory;
+import org.p2s.SettingsFactory;
 
 @RunWith(Enclosed.class)
 public class HoconTest {

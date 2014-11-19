@@ -1,8 +1,10 @@
-package org.p2s;
+package org.p2s.test;
 
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.p2s.JulSettingsFactory;
+import org.p2s.SettingsFactory;
 import some.other.pkg.SomeSettings;
 
 import static org.fest.assertions.Assertions.assertThat;

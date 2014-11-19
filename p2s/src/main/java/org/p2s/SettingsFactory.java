@@ -2,7 +2,7 @@ package org.p2s;
 
 import java.lang.reflect.InvocationTargetException;
 
-abstract class SettingsFactory<P extends DotCaseProperties<P>> {
+public abstract class SettingsFactory<P extends DotCaseProperties<P>> {
 
     private P properties;
     private String source;
