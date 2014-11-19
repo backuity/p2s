@@ -6,6 +6,7 @@
     <groupId>org.backuity.p2s</groupId>
     <artifactId>p2s-parent</artifactId>
     <version>2.1-SNAPSHOT</version>
+    <name>p2s</name>
     <packaging>pom</packaging>
     <description>Generate settings classes that load properties with a simple interface.</description>
     <url>https://github.com/backuity/p2s</url>
