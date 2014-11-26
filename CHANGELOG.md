@@ -1,3 +1,8 @@
+# 2.2
+
+* Add support for inner settings (#1)
+* Add support for primitive types
+
 # 2.1
 
 * Fix SettingsFactory visibility
