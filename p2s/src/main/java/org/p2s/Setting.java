@@ -9,6 +9,9 @@ class Setting {
     private String name, type, pkg;
     private boolean isOptional, isList;
 
+    /**
+     * @param pkg package of the setting type - empty if no package required
+     */
     public Setting(String name, String type, String pkg, boolean isOptional, boolean isNestedType, boolean isList) {
         this.name = name;
         this.type = type;

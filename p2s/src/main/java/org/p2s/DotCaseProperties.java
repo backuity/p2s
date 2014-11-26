@@ -47,14 +47,14 @@ public abstract class DotCaseProperties<T extends DotCaseProperties> {
         return  getProperty(name).map( value -> parse(name, value, clazz));
     }
 
-    public <T> T parse(String name, String value, Class<T> clazz) {
+    public static <T> T parse(String name, String value, Class<T> clazz) {
         if (clazz == String.class) {
             return (T)value;
-        } else if( clazz == Integer.class){
+        } else if( clazz == Integer.class || clazz == Integer.TYPE ){
             return (T)parseInteger(name, value);
-        } else if( clazz == Long.class){
+        } else if( clazz == Long.class || clazz == Long.TYPE){
             return (T)parseLong(name, value);
-        } else if( clazz == Boolean.class) {
+        } else if( clazz == Boolean.class || clazz == Boolean.TYPE) {
             return (T)parseBoolean(name, value);
         } else {
             throw new UnsupportedOperationException("Property " + name +
@@ -62,7 +62,7 @@ public abstract class DotCaseProperties<T extends DotCaseProperties> {
         }
     }
 
-    public Integer parseInteger(String name, String value) {
+    public static Integer parseInteger(String name, String value) {
         try {
             return Integer.parseInt(value);
         } catch(NumberFormatException e) {
@@ -70,7 +70,7 @@ public abstract class DotCaseProperties<T extends DotCaseProperties> {
         }
     }
 
-    public Long parseLong(String name, String value) {
+    public static Long parseLong(String name, String value) {
         try {
             return Long.parseLong(value);
         } catch(NumberFormatException e) {
@@ -78,7 +78,7 @@ public abstract class DotCaseProperties<T extends DotCaseProperties> {
         }
     }
 
-    public Boolean parseBoolean(String name, String value) {
+    public static Boolean parseBoolean(String name, String value) {
         if( "true".equalsIgnoreCase(value) ) {
             return true;
         } else if( "false".equalsIgnoreCase(value) ) {

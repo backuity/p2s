@@ -7,6 +7,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
 import static org.p2s.ReflectionUtil.*;
@@ -120,11 +121,22 @@ public class SettingsProcessor extends AbstractProcessor {
             TypeElement elem = toTypeElement(firstTypeParam).orElseThrow(() ->
                     new RuntimeException("Cannot extract list type parameter " + firstTypeParam + " of method " + method));
             return makeSetting(method, recursiveElements, elem, false, true);
+        } else if( isPrimitiveType(methodType) ) {
+            if( isSupportedPrimitiveType(methodType)) {
+                return makePrimitiveSetting(method, methodType.toString());
+            } else {
+                throw new RuntimeException("Unsupported primitive type " + methodType + " for method " + method);
+            }
         } else {
-            TypeElement elem = toTypeElement(methodType).orElseThrow( () -> new RuntimeException("Method " + method +
-                    " return type " + methodType + " isn't supported") );
+            TypeElement elem = toTypeElement(methodType).orElseThrow(() -> new RuntimeException("Method " + method +
+                    " return type " + methodType + " (" + methodType.getClass() + ") isn't supported"));
             return makeSetting(method, recursiveElements, elem, false, false);
         }
+    }
+
+    private Setting makePrimitiveSetting(ExecutableElement method, String primitiveType) {
+        String propName = method.getSimpleName().toString();
+        return new Setting(propName, primitiveType, "", false, false, false);
     }
 
     private Setting makeSetting(ExecutableElement method, Set<Element> recursiveElements, TypeElement elem, boolean isOptional, boolean isList) {
@@ -154,13 +166,16 @@ public class SettingsProcessor extends AbstractProcessor {
         Long.class
     );
 
-    private Optional<Class<?>> findSupportedBasicType(TypeElement elem) {
-        return supportedBasicTypes.stream()
-                .filter( supportedType -> typeEqualsClass(elem, supportedType))
-                .findFirst();
-    }
+    private static List<String> supportedPrimitiveTypes =
+        Arrays.asList("long","int","boolean");
 
     private boolean isSupportedBasicType(TypeElement elem) {
-        return findSupportedBasicType(elem).isPresent();
+        return supportedBasicTypes.stream()
+                .filter( supportedType -> typeEqualsClass(elem, supportedType))
+                .findFirst().isPresent();
+    }
+
+    private boolean isSupportedPrimitiveType(TypeMirror tpe) {
+        return supportedPrimitiveTypes.contains(tpe.toString());
     }
 }

@@ -2,6 +2,7 @@ package org.p2s.test;
 
 import org.junit.Test;
 import org.p2s.SettingsFactory;
+import some.other.pkg.ConversionSettings;
 import some.other.pkg.SomeSettings;
 
 import java.util.Optional;
@@ -15,20 +16,38 @@ public abstract class ConversionTestBase {
 
     @Test
     public void loadOptionalInteger() {
-        SomeSettings settings = from("camel-case-to-dot-case").load(SomeSettings.class);
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
         assertThat(settings.timeout()).isEqualTo(Optional.of(1234));
     }
 
     @Test
+    public void loadPrimitiveInteger() {
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
+        assertThat(settings.primitiveTimeout()).isEqualTo(1234);
+    }
+
+    @Test
     public void loadLong() {
-        SomeSettings settings = from("camel-case-to-dot-case").load(SomeSettings.class);
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
         assertThat(settings.timestamp()).isEqualTo(123456789012345L);
     }
 
     @Test
+    public void loadPrimitiveLong() {
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
+        assertThat(settings.primitiveTimestamp()).isEqualTo(123456789012345L);
+    }
+
+    @Test
     public void loadBoolean() {
-        SomeSettings settings = from("camel-case-to-dot-case").load(SomeSettings.class);
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
         assertThat(settings.activate()).isTrue();
+    }
+
+    @Test
+    public void loadPrimitiveBoolean() {
+        ConversionSettings settings = from("camel-case-to-dot-case").load(ConversionSettings.class);
+        assertThat(settings.primitiveActivate()).isTrue();
     }
 
     @Test

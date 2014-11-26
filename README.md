@@ -83,6 +83,15 @@ assertEquals(Optional.of(1234), settings.timeout());
 
 This especially shines when used with nested types or arrays.
 
+## Basic Types
+
+The following "basic" types are supported:
+
+ - `Integer` and `int`
+ - `Long` and `long`
+ - `Boolean` and `boolean`
+ - `String`
+
 ## Lists
 
 You can use parameters of type `List`:

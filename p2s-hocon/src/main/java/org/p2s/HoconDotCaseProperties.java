@@ -55,8 +55,6 @@ public class HoconDotCaseProperties extends DotCaseProperties<HoconDotCaseProper
         }
     }
 
-
-
     @Override
     public void setProperty(String key, String value) {
         this.config = config.withValue(key, ConfigValueFactory.fromAnyRef(value));
