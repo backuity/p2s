@@ -61,4 +61,8 @@ public class JulTest {
             }
         }
     }
+
+    public static class InnerInterface extends InnerInterfaceTestBase {
+        @Override public SettingsFactory<?> from(String name) { return JulTest.from(name); }
+    }
 }

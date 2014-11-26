@@ -4,6 +4,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -43,9 +44,11 @@ public class SettingsProcessor extends AbstractProcessor {
         }
         TypeElement interf = (TypeElement)element;
 
-        String interfaceName = element.getSimpleName().toString();
-        String packageName = element.getEnclosingElement().toString();
-        String simpleName = element.getSimpleName().toString() + "Properties";
+        String interfaceName = getInterfaceName(element);
+
+        Element enclosingElement = element.getEnclosingElement();
+        String packageName = getPackageName(enclosingElement);
+        String simpleName = getClassName(element) + "Properties";
 
         System.out.println("Processing " + packageName + "." + simpleName);
         try {
@@ -73,6 +76,34 @@ public class SettingsProcessor extends AbstractProcessor {
             }
         } catch( Exception e ) {
             throw new RuntimeException("Failed to process " + packageName + "." + simpleName, e);
+        }
+    }
+
+    private String getInterfaceName(Element element) {
+        String simpleName = element.getSimpleName().toString();
+        Element enclosingElement = element.getEnclosingElement();
+        if( enclosingElement instanceof TypeElement ) {
+            return getInterfaceName(enclosingElement) + "." + simpleName;
+        } else {
+            return simpleName;
+        }
+    }
+
+    private String getClassName(Element element) {
+        String simpleName = element.getSimpleName().toString();
+        Element enclosingElement = element.getEnclosingElement();
+        if( enclosingElement instanceof TypeElement ) {
+            return getClassName(enclosingElement) + "$" + simpleName;
+        } else {
+            return simpleName;
+        }
+    }
+
+    private String getPackageName(Element element) {
+        if( element instanceof PackageElement ) {
+            return element.toString();
+        } else {
+            return getPackageName(element.getEnclosingElement());
         }
     }
 

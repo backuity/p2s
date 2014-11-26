@@ -35,4 +35,8 @@ public class HoconTest {
     public static class Fallback extends FallbackTestBase {
         @Override public SettingsFactory<?> from(String name) { return HoconTest.from(name); }
     }
+
+    public static class InnerInterface extends InnerInterfaceTestBase {
+        @Override public SettingsFactory<?> from(String name) { return HoconTest.from(name); }
+    }
 }

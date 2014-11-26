@@ -39,10 +39,12 @@ public abstract class SettingsFactory<P extends DotCaseProperties<P>> {
     public <T> T load(Class<T> clazz) {
         Object settings;
         Class<?> settingsPropertiesClass;
+
+        String className = propertyClassName(clazz);
         try {
-            settingsPropertiesClass = SettingsFactory.class.getClassLoader().loadClass(clazz.getCanonicalName() + "Properties");
+            settingsPropertiesClass = SettingsFactory.class.getClassLoader().loadClass(className);
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot load " + clazz, e);
+            throw new IllegalStateException("Cannot load " + className, e);
         }
 
         try {
@@ -54,5 +56,18 @@ public abstract class SettingsFactory<P extends DotCaseProperties<P>> {
             throw new IllegalStateException("Cannot construct " + settingsPropertiesClass, e);
         }
         return (T) settings;
+    }
+
+    static String propertyClassName(Class<?> clazz) {
+        return mergeInnerClasses(clazz) + "Properties";
+    }
+
+    private static String mergeInnerClasses(Class<?> clazz) {
+        Class<?> enclosingClass = clazz.getEnclosingClass();
+        if( enclosingClass == null ) {
+            return clazz.getCanonicalName();
+        } else {
+            return mergeInnerClasses(enclosingClass) + "$" + clazz.getSimpleName();
+        }
     }
 }
