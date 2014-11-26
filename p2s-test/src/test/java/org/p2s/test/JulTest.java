@@ -20,7 +20,7 @@ public class JulTest {
         @Override public SettingsFactory<?> from(String name) { return JulTest.from(name); }
     }
 
-    public static class Unwrapped extends UnwrappedSettingsTestBase {
+    public static class Nested extends NestedSettingsTestBase {
         @Override public SettingsFactory<?> from(String name) { return JulTest.from(name); }
     }
 

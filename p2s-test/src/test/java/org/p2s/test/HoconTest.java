@@ -16,7 +16,7 @@ public class HoconTest {
         @Override public HoconSettingsFactory from(String name) { return HoconTest.from(name); }
     }
 
-    public static class Unwrapped extends UnwrappedSettingsTestBase {
+    public static class Nested extends NestedSettingsTestBase {
         @Override public HoconSettingsFactory from(String name) { return HoconTest.from(name); }
     }
 

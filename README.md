@@ -69,9 +69,9 @@ So given the following HOCON file :
 
      name = "John Doe"
      timeout = 1234
-     the {
-       surname = "Toto"
-     }
+     the.surname = "Toto"
+     # or alternatively:
+     # the { surname = "Toto" }
 
 ```java
 SomeSettings settings = HoconSettingsFactory.from("your-hoconfrom-classpath.conf")
@@ -137,8 +137,8 @@ public interface AddressSettings {
 You can load up a Parent with the following HOCON file :
 
     mother {
-      first { name = "Mary Jane" }
-      last { name = "Watson" }
+      first.name = "Mary Jane"
+      last.name = "Watson"
       age = 32
       address {
         city = "Manhattan"
@@ -147,6 +147,8 @@ You can load up a Parent with the following HOCON file :
     }
 
     father {
+      first { name { "Cab" } }
+      last { name { "Calloway" } }
       # ...
     }
 
