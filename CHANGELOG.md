@@ -1,3 +1,7 @@
+# 2.3
+
+* Fix a bug when the annotation processor is triggered by Eclipse (#2)
+
 # 2.2
 
 * Add support for inner settings (#1)
