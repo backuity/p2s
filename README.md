@@ -59,7 +59,7 @@ To load configuration from an HOCON file add the following dependency to your po
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s-hocon</artifactId>
-         <version>2.1</version>
+         <version>2.3</version>
      </dependency>
  </dependencies>
 ```
