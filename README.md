@@ -11,7 +11,7 @@ Add the following dependency to your pom:
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s</artifactId>
-         <version>2.1</version>
+         <version>2.3</version>
      </dependency>
  </dependencies>
 ```
