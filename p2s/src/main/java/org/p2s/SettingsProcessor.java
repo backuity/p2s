@@ -102,7 +102,7 @@ public class SettingsProcessor extends AbstractProcessor {
 
     private String getPackageName(Element element) {
         if( element instanceof PackageElement ) {
-            return element.toString();
+            return ((PackageElement) element).getQualifiedName().toString();
         } else {
             return getPackageName(element.getEnclosingElement());
         }
@@ -145,7 +145,7 @@ public class SettingsProcessor extends AbstractProcessor {
 
         if( ! isSupportedBasicType(elem) ) {
             if( isInterface(elem) ) {
-                pkg = elem.getEnclosingElement().toString();
+                pkg = getPackageName(elem);
                 recursiveElements.add(elem);
                 isNestedType = true;
             } else {
