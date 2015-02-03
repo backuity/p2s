@@ -20,7 +20,7 @@ public class HoconTest {
         @Override public HoconSettingsFactory from(String name) { return HoconTest.from(name); }
     }
 
-    public static class List extends ListTestBase {
+    public static class Collection extends CollectionTestBase {
         @Override public SettingsFactory<?> from(String name) { return HoconTest.from(name); }
     }
 

@@ -5,6 +5,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +15,9 @@ public class ReflectionUtil {
         return isType(type, Optional.class);
     }
 
+    /** @return true if type represents a List or a Collection */
     public static boolean isListType(TypeMirror type) {
-        return isType(type, List.class);
+        return isType(type, List.class) || isType(type, Collection.class);
     }
 
     public static boolean isType(TypeMirror type, Class<?> clazz) {
