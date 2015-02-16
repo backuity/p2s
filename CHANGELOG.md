@@ -1,3 +1,7 @@
+# 2.4
+
+* Add support for `Collection` (#4)
+
 # 2.3
 
 * Fix a bug when the annotation processor is triggered by Eclipse (#2)
