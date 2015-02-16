@@ -5,7 +5,7 @@
 
     <groupId>org.backuity.p2s</groupId>
     <artifactId>p2s-parent</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.4</version>
     <name>p2s</name>
     <packaging>pom</packaging>
     <description>Generate settings classes that load properties with a simple interface.</description>
