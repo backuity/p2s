@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class DotCaseProperties<T extends DotCaseProperties> {
     public abstract Optional<String> getProperty(String name);
+    public abstract boolean hasProperty(String name);
     public abstract List<String> getProperties(String name);
 
     public abstract <T> List<T> getProperties(String name, Function<DotCaseProperties<?>, T> producer);
@@ -45,6 +46,14 @@ public abstract class DotCaseProperties<T extends DotCaseProperties> {
 
     public <T> Optional<T> loadOptional(String name, Class<T> clazz) {
         return  getProperty(name).map( value -> parse(name, value, clazz));
+    }
+
+    public <T> Optional<T> loadNestedOptional(String name, Function<DotCaseProperties<?>,T> factory) {
+        if( hasProperty(name) ) {
+            return Optional.of(factory.apply(this));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static <T> T parse(String name, String value, Class<T> clazz) {

@@ -60,6 +60,7 @@ class ClassWriter {
         for( Setting setting : settings ) {
             String dotCaseName = CaseUtil.camelCaseToDotCase(setting.getName());
 
+            String path = dotCaseName;
             if( setting.isNestedType() && !setting.isList() ) dotCaseName += ".";
 
             String name = "prefix + \"" + dotCaseName + "\"";
@@ -73,10 +74,12 @@ class ClassWriter {
                 }
             } else if( setting.isNestedType() ) {
                 if( setting.isOptional() ) {
-                    throw new RuntimeException("Optional nested type isn't yet supported!");
+                    String prefixedPath = "prefix + \"" + path + "\"";
+                    writer.write("properties.loadNestedOptional(" + prefixedPath + ", p -> "+
+                        "new " + setting.getType() + "Properties(" + name + ", p));\n" );
+                } else {
+                    writer.write("new " + setting.getType() + "Properties(" + name + ", properties);\n");
                 }
-
-                writer.write("new " + setting.getType() + "Properties(" + name + ", properties);\n");
             } else {
                 writer.write("properties.load");
                 writer.write(setting.isOptional() ? "Optional" : "Mandatory");

@@ -29,6 +29,11 @@ public class HoconDotCaseProperties extends DotCaseProperties<HoconDotCaseProper
     }
 
     @Override
+    public boolean hasProperty(String name) {
+        return config.hasPath(name);
+    }
+
+    @Override
     public List<String> getProperties(String name) {
         return config.getStringList(name);
     }

@@ -1,8 +1,5 @@
 package org.p2s;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +19,11 @@ public class JulDotCaseProperties extends DotCaseProperties<JulDotCaseProperties
     @Override
     public Optional<String> getProperty(String name) {
         return Optional.ofNullable(properties.getProperty(name));
+    }
+
+    @Override
+    public boolean hasProperty(String name) {
+        return properties.keySet().stream().filter( k -> k.toString().startsWith(name)).findAny().isPresent();
     }
 
     @Override

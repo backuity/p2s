@@ -199,7 +199,14 @@ or with a Properties:
     addresses.2.city = NYC
     addresses.2.street = 1st avenue
 
-Note : Optional nested types are not yet supported.
+Nested types can be optional:
+
+```java
+@Settings
+public interface OptionalAddressSetting {
+    Optional<AddressSettings> address();
+}
+```
 
 ## Fallback
 
