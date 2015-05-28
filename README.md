@@ -11,7 +11,7 @@ Add the following dependency to your pom:
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s</artifactId>
-         <version>2.4</version>
+         <version>2.5</version>
      </dependency>
  </dependencies>
 ```
@@ -59,7 +59,7 @@ To load configuration from an HOCON file add the following dependency to your po
      <dependency>
          <groupId>org.backuity.p2s</groupId>
          <artifactId>p2s-hocon</artifactId>
-         <version>2.4</version>
+         <version>2.5</version>
      </dependency>
  </dependencies>
 ```

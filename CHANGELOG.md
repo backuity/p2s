@@ -1,3 +1,7 @@
+# 2.5
+
+* Add support for optional nested type
+
 # 2.4
 
 * Add support for `Collection` (#4)
